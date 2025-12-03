@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily To-Do List</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero__text">
+        <p class="eyebrow">Daily focus</p>
+        <h1>Seoyeon's To-Do</h1>
+        <p class="subtitle">입력하고, 체크하고, 필요하면 수정·삭제하세요.</p>
+      </div>
+      <div class="hero__meta">
+        <label class="meta-field">
+          <span>날짜</span>
+          <input class="pretty-date" type="date" id="dateInput" />
+        </label>
+        <div class="meta-field mood-field">
+          <span>기분</span>
+          <button type="button" id="moodToggle" class="mood-display" aria-expanded="false">
+            <span id="moodValue" class="mood-value">오늘의 기분을 알려주세요</span>
+          </button>
+            <div id="moodList" class="mood-list">
+            <button type="button" data-mood="😀 행복해요">😀 행복해요</button>
+            <button type="button" data-mood="🥲 슬퍼요">🥲 슬퍼요</button>
+            <button type="button" data-mood="😌 차분해요">😌 차분해요</button>
+            <button type="button" data-mood="😴 피곤해요">😴 피곤해요</button>
+            <button type="button" data-mood="😤 아쉬워요">😤 아쉬워요</button>
+            <button type="button" data-mood="🤩 신나요">🤩 신나요</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="card">
+      <form id="todoForm" class="todo-form">
+        <input
+          type="text"
+          id="todoInput"
+          placeholder="할 일을 입력하세요"
+          autocomplete="off"
+          aria-label="할 일 입력"
+          required
+        />
+        <button type="submit">추가</button>
+      </form>
+
+      <div class="list-head">
+        <span>Tasks</span>
+        <div class="filters">
+          <button type="button" class="filter-btn active" data-filter="all">전체</button>
+          <button type="button" class="filter-btn" data-filter="done">완료</button>
+          <button type="button" class="filter-btn" data-filter="todo">아직</button>
+        </div>
+      </div>
+      <ul id="todoList" class="todo-list" aria-live="polite"></ul>
+    </main>
+  </div>
+
+  <template id="todoItemTemplate">
+    <li class="todo-item">
+      <div class="left">
+        <button class="check" aria-label="완료 토글"></button>
+        <span class="text"></span>
+        <input class="edit-input" type="text" aria-label="할 일 수정 입력" />
+      </div>
+      <div class="actions">
+        <button class="save" aria-label="저장">저장</button>
+        <button class="cancel" aria-label="취소">취소</button>
+        <button class="edit" aria-label="수정">수정</button>
+        <button class="delete" aria-label="삭제">삭제</button>
+      </div>
+    </li>
+  </template>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
