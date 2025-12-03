@@ -77,8 +77,7 @@ moodList.addEventListener("click", (e) => {
   const target = e.target.closest("button[data-mood]");
   if (!target) return;
   const mood = (target.textContent || target.dataset.mood || "").trim();
-  moodValue.textContent = mood;
-  moodValue.classList.add("mood-selected");
+  setMoodDisplay(mood);
   setMoodOpen(false);
 });
 
@@ -123,6 +122,7 @@ if (dateInput) {
   dateInput.addEventListener("change", () => {
     datePickerOpen = false;
     render();
+    syncMoodDisplayForDate();
   });
   dateInput.addEventListener("blur", () => {
     datePickerOpen = false;
@@ -149,6 +149,16 @@ function setFilter(filter) {
 function toggleMood() {
   const expanded = moodToggle.getAttribute("aria-expanded") === "true";
   setMoodOpen(!expanded);
+}
+
+function setMoodDisplay(text) {
+  const moodText = text && text !== MOOD_PLACEHOLDER ? text : MOOD_PLACEHOLDER;
+  moodValue.textContent = moodText;
+  if (moodText === MOOD_PLACEHOLDER) {
+    moodValue.classList.remove("mood-selected");
+  } else {
+    moodValue.classList.add("mood-selected");
+  }
 }
 
 const getTodoRef = (id) => ref(db, `todos/${id}`);
@@ -293,7 +303,27 @@ onValue(todosRef, (snapshot) => {
         .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
     : [];
   render();
+  syncMoodDisplayForDate();
 });
 
+function getMoodForDate(date) {
+  if (!date) return null;
+  const match = todos
+    .filter((t) => t.date === date && t.mood)
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0];
+  return match ? match.mood : null;
+}
+
+function syncMoodDisplayForDate() {
+  const selectedDate = (dateInput && dateInput.value) || "";
+  if (!selectedDate) return;
+  const mood = getMoodForDate(selectedDate);
+  if (mood) {
+    setMoodDisplay(mood);
+  } else {
+    setMoodDisplay(MOOD_PLACEHOLDER);
+  }
+}
+
 // initialize mood placeholder
-moodValue.textContent = MOOD_PLACEHOLDER;
+setMoodDisplay(MOOD_PLACEHOLDER);
