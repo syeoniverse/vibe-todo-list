@@ -28,6 +28,7 @@ const dateInput = document.getElementById("dateInput");
 const moodField = document.querySelector(".mood-field");
 
 const MOOD_PLACEHOLDER = "오늘의 기분을 알려주세요";
+const DEFAULT_MOOD = "😀 행복해요";
 const CLIENT_KEY = "vibe-todo-client-id";
 
 let clientId = localStorage.getItem(CLIENT_KEY);
@@ -75,7 +76,7 @@ if (moodField) {
 moodList.addEventListener("click", (e) => {
   const target = e.target.closest("button[data-mood]");
   if (!target) return;
-  const mood = target.dataset.mood;
+  const mood = (target.textContent || target.dataset.mood || "").trim();
   moodValue.textContent = mood;
   moodValue.classList.add("mood-selected");
   setMoodOpen(false);
@@ -153,7 +154,9 @@ function toggleMood() {
 const getTodoRef = (id) => ref(db, `todos/${id}`);
 
 async function addTodo(text) {
-  const dateValue = (dateInput && dateInput.value) || "";
+  const dateValue = (dateInput && dateInput.value) || new Date().toISOString().slice(0, 10);
+  const moodTextRaw = (moodValue && moodValue.textContent.trim()) || "";
+  const moodToSave = !moodTextRaw || moodTextRaw === MOOD_PLACEHOLDER ? DEFAULT_MOOD : moodTextRaw;
   const newRef = push(todosRef);
   const payload = {
     text,
@@ -161,6 +164,7 @@ async function addTodo(text) {
     date: dateValue,
     createdAt: Date.now(),
     ownerId: clientId,
+    mood: moodToSave,
   };
   try {
     await set(newRef, payload);
